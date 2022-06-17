@@ -1,0 +1,23 @@
+.list {
+    width: 95%;
+}
+
+.list-nav {
+    width: 95%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.list-nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.list-nav-item h3 {
+    margin-left: 5px;
+}
+
+.cursor {
+    cursor: pointer;
+}

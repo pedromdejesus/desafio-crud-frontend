@@ -1,0 +1,22 @@
+.search-bar {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+.search-bar input[type=text] {
+    width: 75%;
+    height: 30px;
+    padding: 5px;
+    font-size: 20px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+.search-bar button {
+    width: 45px;
+    height: 44px;
+    margin-left: -1px;
+    padding: 10px;
+}
