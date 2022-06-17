@@ -1,5 +1,23 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #ddd;
+  font-family: sans-serif;
+}
+
+.main {
+  width: 100%;
+  display: flex;
+}
+
+.sub-main {
+  width: 50%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  border-right: 1px solid black;
+}
+
+.sub-main:last-child {
+  border: none;
 }

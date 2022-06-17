@@ -1,7 +1,12 @@
 import './App.css'
 
 function App() {
-  return <h1>Criação do Projeto</h1>
+  return <div className="main">
+    <div className="sub-main">
+    </div>
+    <div className="sub-main">
+    </div>
+  </div>
 }
 
 export default App
