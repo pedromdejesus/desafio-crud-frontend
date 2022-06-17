@@ -27,7 +27,7 @@ const search = async (keyword: string): Promise<ICryptoCurrency[]> => {
     return data;
 };
 
-export const CryptoCurrenciesService = {
+export const CryptoCurrencyService = {
     getAll,
     post,
     put,
