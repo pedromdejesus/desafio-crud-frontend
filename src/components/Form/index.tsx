@@ -5,17 +5,17 @@ import { IFormValidator } from "../../interfaces/IFormValidator";
 import { CryptoCurrencyService } from "../../services/CryptoCurrencyService";
 
 export function Form() {
-    const [abbreviations, setAbbreviations] = useState<string>('');
-    const [description, setDescription] = useState<string>('');
-    const [price, setPrice] = useState<string>('');
+    const [newAbbreviations, setNewAbbreviations] = useState<string>('');
+    const [newDescription, setNewDescription] = useState<string>('');
+    const [newPrice, setNewPrice] = useState<string>('0');
 
     const [newCryptoCurrency, setNewCryptoCurrency] = useState<ICryptoCurrency>({
-        abbreviations: "",
-        description: "",
-        price: 0,
+        abbreviations: newAbbreviations,
+        description: newDescription,
+        price: parseFloat(newPrice),
     });
 
-    const [formError, setFormError] = useState<IFormValidator>({
+    const [formValidator, setFormValidator] = useState<IFormValidator>({
         abbreviations: "",
         description: "",
         price: "",
@@ -23,51 +23,49 @@ export function Form() {
 
     useEffect(() => {
         setNewCryptoCurrency({...newCryptoCurrency, 
-            abbreviations,
-            description,
-            price: parseFloat(price)
+            abbreviations: newAbbreviations,
+            description: newDescription,
+            price: parseFloat(newPrice)
         });
 
-    }, [abbreviations, description, price]);
+    }, [newAbbreviations, newDescription, newPrice]);
 
     const handleSubmit = useCallback(async () => {
-        console.log(formError)
-
-        if(abbreviations.length == 0) {
-            setFormError({...formError, abbreviations: "Campo sigla está vazio!"});
+        if(newAbbreviations.length == 0) {
+            setFormValidator({abbreviations: "Campo sigla está vazio!"});
             return;
         } else {
-            if (formError?.abbreviations) {
-                formError.abbreviations = "";
+            if (formValidator?.abbreviations) {
+                setFormValidator({abbreviations: ""});
             }
         }
 
-        if(description.length == 0) {
-            setFormError({...formError, description: "Campo descrição está vazio!"});
+        if(newDescription.length == 0) {
+            setFormValidator({description: "Campo descrição está vazio!"});
             return;
         } else {
-            if (formError?.description) {
-                formError.description = "";
+            if (formValidator?.description) {
+                setFormValidator({description: ""});
             }
         }
 
-        if(price.length == 0) {
-            setFormError({...formError, price: "Campo preço está vazio!"});
+        if(newPrice.length == 0) {
+            setFormValidator({price: "Campo preço está vazio!"});
             return;
         } else {
-            if (!parseFloat(price)) {
-                setFormError({...formError, price: "Campo preço precisa ser decimal!"});
+            if (!parseFloat(newPrice)) {
+                setFormValidator({price: "Campo preço precisa ser decimal!"});
                 return;
             } else {
-                if (formError?.price) {
-                    formError.price = "";
+                if (formValidator?.price) {
+                    setFormValidator({price: ""});
                 }
             }
         }     
         
         await CryptoCurrencyService.post(newCryptoCurrency);
         location.reload();
-    }, [abbreviations, description, price, formError, setFormError, newCryptoCurrency]);
+    }, [newAbbreviations, newDescription, newPrice, formValidator, setFormValidator, newCryptoCurrency]);
 
     return (
         <div className="form">
@@ -76,31 +74,31 @@ export function Form() {
                 <input
                     name="abbreviations" 
                     type="text" 
-                    value={abbreviations}
-                    onChange={(e) => setAbbreviations(e.target.value.toUpperCase())}
+                    value={newAbbreviations}
+                    onChange={(e) => setNewAbbreviations(e.target.value.toUpperCase())}
                     maxLength={5}
                 />
-                {formError?.abbreviations && (<p>{formError.abbreviations}</p>)}
+                {formValidator?.abbreviations && (<p>{formValidator.abbreviations}</p>)}
             </div>
             <div className="form-item">
                 <h3>Descrição</h3>
                 <input 
                     name="description" 
                     type="text" 
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
+                    value={newDescription}
+                    onChange={(e) => setNewDescription(e.target.value)}
                 />
-                {formError?.description && (<p>{formError.description}</p>)}
+                {formValidator?.description && (<p>{formValidator.description}</p>)}
             </div>
             <div className="form-item">
                 <h3>{`Cotação (R$)`}</h3>
                 <input 
                     name="price" 
                     type="text" 
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
+                    value={newPrice}
+                    onChange={(e) => setNewPrice(e.target.value)}
                 />
-                {formError?.price && (<p>{formError.price}</p>)}
+                {formValidator?.price && (<p>{formValidator.price}</p>)}
             </div>
             <button onClick={handleSubmit} className="button">
                 <h3>Salvar</h3>

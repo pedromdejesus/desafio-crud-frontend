@@ -1,7 +1,8 @@
 import "./style.css"
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ICryptoCurrency } from "../../interfaces/ICryptoCurrency";
 import { CryptoCurrencyService } from "../../services/CryptoCurrencyService";
+import { IFormValidator } from "../../interfaces/IFormValidator";
 
 
 type ListProps = {
@@ -10,32 +11,73 @@ type ListProps = {
 }
 
 export function ListItem(props: ListProps) {
-    const [isCancel, setIsCancel] = useState<boolean>(true);
-    const [isEdit, setIsEdit] = useState<boolean>(false);
+    const [cancel, setCancel] = useState<boolean>(true);
+    const [edit, setEdit] = useState<boolean>(false);
+    
+    const [thisAbbreviations, setThisAbbreviations] = useState<string>(props.cryptoCurrency.abbreviations);
+    const [thisDescription, setThisDescription] = useState<string>(props.cryptoCurrency.description);
+    const [thisPrice, setThisPrice] = useState<string>(props.cryptoCurrency.price.toString());
+    
+    const [thisCryptoCurrency, setThisCryptoCurrency] = useState<ICryptoCurrency>(props.cryptoCurrency);
 
-    const [CC, setCC] = useState<ICryptoCurrency>(props.cryptoCurrency);
+    const [formValidator, setFormValidator] = useState<IFormValidator>({
+        abbreviations: "",
+        description: "",
+        price: "",
+    });
+
+    useEffect(() => {
+        setThisCryptoCurrency({...thisCryptoCurrency, 
+            abbreviations: thisAbbreviations,
+            description: thisDescription,
+            price: parseFloat(thisPrice)
+        });
+
+    }, [thisAbbreviations, thisDescription, thisPrice]);
 
     const updateSubmit = useCallback(async () => {
-        if (CC.abbreviations == "") {
-            alert("Sigla Vazia!");
+        if(thisAbbreviations.length == 0) {
+            setFormValidator({abbreviations: "Campo sigla está vazio!"});
             return;
+        } else {
+            if (formValidator?.abbreviations) {
+                setFormValidator({abbreviations: ""});
+            }
         }
 
-        if (CC.description == "") {
-            alert("Descrição Vazia!");
+        if(thisDescription.length == 0) {
+            setFormValidator({description: "Campo descrição está vazio!"});
             return;
+        } else {
+            if (formValidator?.description) {
+                setFormValidator({description: ""});
+            }
         }
 
-        await CryptoCurrencyService.put(CC)
+        if(thisPrice.length == 0) {
+            setFormValidator({price: "Campo preço está vazio!"});
+            return;
+        } else {
+            if (!parseFloat(thisPrice)) {
+                setFormValidator({price: "Campo preço precisa ser decimal!"});
+                return;
+            } else {
+                if (formValidator?.price) {
+                    setFormValidator({price: ""});
+                }
+            }
+        }     
+        
+        await CryptoCurrencyService.put(thisCryptoCurrency);
         location.reload();
-    }, [CC]) 
+    }, [thisAbbreviations, thisDescription, thisPrice, formValidator, setFormValidator, thisCryptoCurrency]) 
 
     const deleteSubmit = useCallback(async () => {
-        if (CC.id) {
-            await CryptoCurrencyService.deleteById(CC.id)
+        if (thisCryptoCurrency.id) {
+            await CryptoCurrencyService.deleteById(thisCryptoCurrency.id)
             location.reload();
         }
-    }, [CC]) 
+    }, [thisCryptoCurrency]) 
 
     return (
         <>
@@ -53,37 +95,37 @@ export function ListItem(props: ListProps) {
                 </div>
             ) : (
                 <div id={props.cryptoCurrency.id?.toString()} className="list-item">
-                    {isEdit && !isCancel && (
+                    {edit && !cancel && (
                         <>
                             <div>
-                                <input
-                                    name="editAbbreviations" 
-                                    type="text" 
-                                    value={CC.abbreviations}
-                                    onChange={(e) => setCC({
-                                        ...CC, 
-                                        abbreviations: e.target.value.toUpperCase()
-                                    })}
-                                    maxLength={5}
-                                />
-                                <input 
-                                    name="editDescription" 
-                                    type="text" 
-                                    value={CC.description}
-                                    onChange={(e) => setCC({
-                                        ...CC, 
-                                        description: e.target.value
-                                    })}
-                                />
-                                <input 
-                                    name="editPrice" 
-                                    type="text" 
-                                    value={CC.price}
-                                    onChange={(e) => setCC({
-                                        ...CC, 
-                                        price: parseInt(e.target.value)
-                                    })}
-                                />
+                                <div className="list-item-edit">
+                                    <input
+                                        name="editAbbreviations" 
+                                        type="text" 
+                                        value={thisAbbreviations}
+                                        onChange={(e) => setThisAbbreviations(e.target.value.toUpperCase())}
+                                        maxLength={5}
+                                    />
+                                    {formValidator?.abbreviations && (<p>{formValidator.abbreviations}</p>)}
+                                </div>
+                                <div className="list-item-edit">
+                                    <input 
+                                        name="editDescription" 
+                                        type="text" 
+                                        value={thisDescription}
+                                        onChange={(e) => setThisDescription(e.target.value)}
+                                    />
+                                    {formValidator?.description && (<p>{formValidator.description}</p>)}
+                                </div>
+                                <div className="list-item-edit">
+                                    <input 
+                                        name="editPrice" 
+                                        type="text" 
+                                        value={thisPrice}
+                                        onChange={(e) => setThisPrice(e.target.value)}
+                                    />
+                                    {formValidator?.price && (<p>{formValidator.price}</p>)}
+                                </div>
                             </div>
                             <div>
                                 <button className="update-button" onClick={updateSubmit}>
@@ -93,15 +135,15 @@ export function ListItem(props: ListProps) {
                                     <i className="material-icons">delete</i>
                                 </button>
                                 <button className="cursor" onClick={() => {
-                                    setIsEdit(false);
-                                    setIsCancel(true);
+                                    setEdit(false);
+                                    setCancel(true);
                                 }}>
                                     <i className="material-icons">cancel</i>
                                 </button>
                             </div>
                         </>
                     )}
-                    {isCancel && (
+                    {cancel && (
                         <>
                             <div>
                                 <div className="pill">{props.cryptoCurrency.abbreviations}</div>
@@ -114,8 +156,8 @@ export function ListItem(props: ListProps) {
                             </div>
                             <div>
                                 <button className="cursor" onClick={() => {
-                                    setIsEdit(true);
-                                    setIsCancel(false);
+                                    setEdit(true);
+                                    setCancel(false);
                                 }}>
                                     <i className="material-icons">edit</i>
                                 </button>

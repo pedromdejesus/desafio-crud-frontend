@@ -8,8 +8,8 @@ import { SearchBar } from "../SearchBar";
 
 export function List() {
     const [cryptoCurrencies, setCryptoCurrencies] = useState<ICryptoCurrency[]>([]);
-    const [isAll, setIsAll] = useState<boolean>(true);
-    const [isEdit, setIsEdit] = useState<boolean>(false);
+    const [all, setAll] = useState<boolean>(true);
+    const [edit, setEdit] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -27,11 +27,11 @@ export function List() {
                 <div className="list-nav-item">
                     <input
                         className="cursor"
-                        checked={isAll}
+                        checked={all}
                         type="radio"
                         onClick={() => {
-                            setIsAll(true);
-                            setIsEdit(false);
+                            setAll(true);
+                            setEdit(false);
                         }}
                     >
                     </input>
@@ -40,23 +40,23 @@ export function List() {
                 <div className="list-nav-item">
                     <input
                         className="cursor"
-                        checked={isEdit}
+                        checked={edit}
                         type="radio"
                         onClick={() => {
-                            setIsAll(false);
-                            setIsEdit(true);
+                            setAll(false);
+                            setEdit(true);
                         }}
                     />
                     <h3>Editar</h3>
                 </div>
             </div>
             <div className="list">
-                {cryptoCurrencies.length > 0 && isAll && (
+                {cryptoCurrencies.length > 0 && all && (
                     cryptoCurrencies.map(cc => (
                         <ListItem cryptoCurrency={cc} />
                     ))
                 )}
-                {cryptoCurrencies.length > 0 && isEdit && (
+                {cryptoCurrencies.length > 0 && edit && (
                     cryptoCurrencies.map(cc => (
                         <ListItem cryptoCurrency={cc} isEditable />
                     ))
