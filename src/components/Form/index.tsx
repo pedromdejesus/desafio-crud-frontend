@@ -12,7 +12,7 @@ export function Form() {
     const [newCryptoCurrency, setNewCryptoCurrency] = useState<ICryptoCurrency>({
         abbreviations: newAbbreviations,
         description: newDescription,
-        price: parseFloat(newPrice),
+        price: newPrice,
     });
 
     const [formValidator, setFormValidator] = useState<IFormValidator>({
@@ -25,7 +25,7 @@ export function Form() {
         setNewCryptoCurrency({...newCryptoCurrency, 
             abbreviations: newAbbreviations,
             description: newDescription,
-            price: parseFloat(newPrice)
+            price: newPrice
         });
 
     }, [newAbbreviations, newDescription, newPrice]);
@@ -53,13 +53,13 @@ export function Form() {
             setFormValidator({price: "Campo preço está vazio!"});
             return;
         } else {
-            if (!parseFloat(newPrice)) {
-                setFormValidator({price: "Campo preço precisa ser decimal!"});
-                return;
-            } else {
+            if (parseFloat(newPrice) || parseFloat(newPrice) == 0) {
                 if (formValidator?.price) {
                     setFormValidator({price: ""});
                 }
+            } else {
+                setFormValidator({price: "Campo preço precisa ser decimal!"});
+                return;
             }
         }     
         

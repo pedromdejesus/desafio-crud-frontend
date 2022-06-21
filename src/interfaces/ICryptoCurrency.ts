@@ -2,7 +2,7 @@ export interface ICryptoCurrency {
     id?: number,
     abbreviations: string,
     description: string,
-    price: number,
+    price: string,
     inclusionDate?: string,
     updateDate?: string
 }

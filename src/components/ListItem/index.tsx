@@ -16,7 +16,7 @@ export function ListItem(props: ListProps) {
     
     const [thisAbbreviations, setThisAbbreviations] = useState<string>(props.cryptoCurrency.abbreviations);
     const [thisDescription, setThisDescription] = useState<string>(props.cryptoCurrency.description);
-    const [thisPrice, setThisPrice] = useState<string>(props.cryptoCurrency.price.toString());
+    const [thisPrice, setThisPrice] = useState<string>(props.cryptoCurrency.price);
     
     const [thisCryptoCurrency, setThisCryptoCurrency] = useState<ICryptoCurrency>(props.cryptoCurrency);
 
@@ -30,12 +30,14 @@ export function ListItem(props: ListProps) {
         setThisCryptoCurrency({...thisCryptoCurrency, 
             abbreviations: thisAbbreviations,
             description: thisDescription,
-            price: parseFloat(thisPrice)
+            price: thisPrice
         });
 
     }, [thisAbbreviations, thisDescription, thisPrice]);
 
     const updateSubmit = useCallback(async () => {
+        console.log(formValidator)
+
         if(thisAbbreviations.length == 0) {
             setFormValidator({abbreviations: "Campo sigla está vazio!"});
             return;
@@ -58,13 +60,13 @@ export function ListItem(props: ListProps) {
             setFormValidator({price: "Campo preço está vazio!"});
             return;
         } else {
-            if (!parseFloat(thisPrice)) {
-                setFormValidator({price: "Campo preço precisa ser decimal!"});
-                return;
-            } else {
+            if (parseFloat(thisPrice) || parseFloat(thisPrice) == 0) {
                 if (formValidator?.price) {
                     setFormValidator({price: ""});
                 }
+            } else {
+                setFormValidator({price: "Campo preço precisa ser decimal!"});
+                return;
             }
         }     
         
